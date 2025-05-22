@@ -10,6 +10,8 @@ locals {
   }
 }
 
+inputs = local.common_inputs
+
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
