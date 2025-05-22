@@ -5,6 +5,9 @@ resource "aws_launch_template" "demoapp_lt" {
   vpc_security_group_ids = [aws_security_group.demo_sg.id]
   instance_type = "${var.instance_type}"
   user_data = base64encode(file("../../user_data/user_data.sh"))
+  iam_instance_profile {
+    arn = aws_iam_instance_profile.ec2-docdb-profile.arn
+  }
 }
 
 
@@ -20,6 +23,14 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http" {
   from_port         = 80
   ip_protocol       = "tcp"
   to_port           = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_from_docdb" { 
+  security_group_id = aws_security_group.demo_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 27017
+  ip_protocol       = "tcp"
+  to_port           = 27017
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh" { 
